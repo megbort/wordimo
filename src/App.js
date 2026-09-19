@@ -1,7 +1,7 @@
 import './styles.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const SECRET_WORD = 'SPEND';
+const SECRET_WORD_BACKUPS = ['SPEND', 'WORTH', 'STORM', 'HAPPY'];
 const MAX_GUESSES = 5;
 const WORD_LENGTH = 5;
 
@@ -60,8 +60,36 @@ function App() {
   const [guesses, setGuesses] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [gameResult, setGameResult] = useState('');
+  const [secretWord, setSecretWord] = useState('');
 
-  const secret = SECRET_WORD.toLowerCase();
+  useEffect(() => {
+    const getSecretWord = async () => {
+      try {
+        const url = `https://random-word-api.herokuapp.com/word?length=${WORD_LENGTH}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const word = data[0];
+
+        if (word?.length !== WORD_LENGTH) {
+          throw new Error(`API returned invalid word.`);
+        }
+
+        setSecretWord(word.toLowerCase());
+      } catch {
+        const randomIndex = Math.floor(
+          Math.random() * SECRET_WORD_BACKUPS.length,
+        );
+        setSecretWord(randomIndex.toLowerCase());
+      }
+    };
+
+    getSecretWord();
+  }, []);
 
   const guessWord = () => {
     const trimmedWord = currentWord.trim().toLowerCase();
@@ -85,10 +113,10 @@ function App() {
 
     setGuesses((previousGuesses) => [
       ...previousGuesses,
-      { word: trimmedWord, result: computeLetters(trimmedWord, secret) },
+      { word: trimmedWord, result: computeLetters(trimmedWord, secretWord) },
     ]);
 
-    if (trimmedWord === secret) {
+    if (trimmedWord === secretWord) {
       setGameResult('won');
     } else if (guesses.length + 1 === MAX_GUESSES) {
       setGameResult('lost');
@@ -102,12 +130,18 @@ function App() {
           <WordRow key={index} guess={guesses[index] ?? ''} />
         ))}
       </div>
-      <div style={{ height: 24 }}>
+      <div style={{ height: 50, textAlign: 'center' }}>
         <span style={{ color: 'green' }}>
           {gameResult === 'won' && 'You win the game!'}
         </span>
         <span style={{ color: 'red' }}>
-          {gameResult === 'lost' && 'You lost, try again next time'}
+          {gameResult === 'lost' && (
+            <>
+              You lost, try again next time.
+              <br />
+              Secret word '{secretWord.toUpperCase()}'.
+            </>
+          )}
         </span>
       </div>
       <div className="controls">
@@ -130,9 +164,6 @@ function App() {
           Guess Word
         </button>
         <p className="error-message">{errorMessage}</p>
-      </div>
-      <div className="previous-guesses">
-        {guesses.map((guess) => guess.word).join(', ')}
       </div>
     </div>
   );
