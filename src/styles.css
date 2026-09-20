@@ -20,7 +20,17 @@
 
 .word-row {
   display: grid;
-  grid-template-columns: repeat(5, 62px);
+  &.short {
+    grid-template-columns: repeat(4, 62px);
+  }
+
+  &.medium {
+    grid-template-columns: repeat(5, 62px);
+  }
+
+  &.long {
+    grid-template-columns: repeat(6, 62px);
+  }
 }
 
 .word-row > * {
