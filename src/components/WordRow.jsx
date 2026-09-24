@@ -1,5 +1,4 @@
 import { GAME_SETTING } from '../constants';
-import { v4 as uuid } from 'uuid';
 
 export default function WordRow({ guess, setting }) {
   const word = guess?.word ?? '';
@@ -13,7 +12,7 @@ export default function WordRow({ guess, setting }) {
   return (
     <div className={`word-row ${setting}`}>
       {letters.map((letter, index) => (
-        <span style={{ background: result[index] ?? 'white' }} key={uuid}>
+        <span style={{ background: result[index] ?? 'white' }} key={index}>
           {letter}
         </span>
       ))}
