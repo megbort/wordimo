@@ -14,7 +14,7 @@ Play it at [megbort.github.io/wordimo](https://megbort.github.io/wordimo/).
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24+
 - npm
 
 ### Installation
