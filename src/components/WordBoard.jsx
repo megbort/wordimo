@@ -214,7 +214,7 @@ export default function WordBoard () {
           Enter
         </button>
       </div>
-      <div style={{height: 100, paddingTop: 12}}>
+      <div style={{height: 100, marginTop: 12}}>
         {definition && (
           <p>
             {secretWord[0].toUpperCase() + secretWord.slice(1)}: {definition}
